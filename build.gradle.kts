@@ -6,10 +6,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * - plugins declared here allows not only to configure the version, but also adds it to the classpath
  */
 plugins {
-    id("org.flywaydb.flyway")                 version Versions.flywayGradlePlugin  apply false
-    id("org.jetbrains.kotlin.jvm")            version Versions.kotlinLang          apply false
-    id("org.jetbrains.kotlin.plugin.noarg")   version Versions.kotlinLang          apply false
-    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlinLang          apply false
+    id("org.flywaydb.flyway")                 version Versions.flywayGradlePlugin apply false
+    id("org.jetbrains.kotlin.jvm")            version Versions.kotlinLang         apply false
+    id("org.jetbrains.kotlin.kapt")           version Versions.kotlinLang         apply false
+    id("org.jetbrains.kotlin.plugin.noarg")   version Versions.kotlinLang         apply false
+    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlinLang         apply false
 }
 
 allprojects {
