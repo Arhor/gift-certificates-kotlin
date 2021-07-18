@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import javax.sql.DataSource
 
-
 @Configuration(proxyBeanMethods = false)
 @ComponentScan("com.epam.esm.gift.repository")
 class RepositoryConfig {

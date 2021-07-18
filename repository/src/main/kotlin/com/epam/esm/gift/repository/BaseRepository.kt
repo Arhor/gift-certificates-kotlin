@@ -9,9 +9,9 @@ interface BaseRepository<T, K> where T : BaseEntity<K>, K : Serializable {
 
     fun update(entity: T): T
 
-    fun readAll(): List<T>
+    fun findAll(): List<T>
 
-    fun readById(id: K): T?
+    fun findById(id: K): T?
 
     fun delete(entity: T)
 

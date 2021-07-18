@@ -45,7 +45,8 @@ allOpen {
     annotations(
         "org.springframework.context.annotation.Configuration",
         "org.springframework.stereotype.Component",
-        "org.springframework.stereotype.Repository"
+        "org.springframework.stereotype.Repository",
+        "org.springframework.transaction.annotation.Transactional"
     )
 }
 

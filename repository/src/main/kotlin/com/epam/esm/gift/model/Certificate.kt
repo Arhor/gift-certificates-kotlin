@@ -5,10 +5,10 @@ import com.epam.esm.gift.annotation.Id
 import com.epam.esm.gift.annotation.Table
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Table("certificates")
 data class Certificate(
-
     @Id
     @Column
     override var id: Long? = null,
@@ -30,5 +30,13 @@ data class Certificate(
 
     @Column("date_time_updated")
     var dateTimeUpdated: LocalDateTime? = null,
+) : BaseEntity<Long>, Auditable {
 
-) : BaseEntity<Long>
+    override fun onCreate() {
+        dateTimeCreated = LocalDateTime.now(ZoneOffset.UTC)
+    }
+
+    override fun onUpdate() {
+        dateTimeUpdated = LocalDateTime.now(ZoneOffset.UTC)
+    }
+}
