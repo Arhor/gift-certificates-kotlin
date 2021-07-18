@@ -1,4 +1,6 @@
 package com.epam.esm.gift.annotation
 
+@MustBeDocumented
 @Target(AnnotationTarget.PROPERTY)
-annotation class Id()
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Id
