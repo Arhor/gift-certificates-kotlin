@@ -1,16 +1,18 @@
 package com.epam.esm.gift.web.error
 
 import com.epam.esm.gift.error.EntityDuplicateException
+import com.epam.esm.gift.error.EntityNotFoundException
 import mu.KLogging
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.util.*
 
 @RestControllerAdvice
-class GlobalExceptionHandler(private val messages: MessageSource) {
+class GlobalExceptionHandler(private val messages: MessageSource) : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -19,6 +21,19 @@ class GlobalExceptionHandler(private val messages: MessageSource) {
         return ApiError(messages.getMessage(ERROR_UNCATEGORIZED, locale))
     }
 
+    @ExceptionHandler(EntityNotFoundException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleEntityNotFoundException(ex: EntityNotFoundException, locale: Locale): ApiError {
+        logger.error(ex.message, ex)
+        return ApiError(
+            message = messages.getMessage(
+                ERROR_REST_RESOURCE_NOT_FOUND,
+                arrayOf(ex.name, ex.condition),
+                locale
+            ),
+            code = ErrorCode.NOT_FOUND
+        )
+    }
 
     @ExceptionHandler(EntityDuplicateException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -40,6 +55,7 @@ class GlobalExceptionHandler(private val messages: MessageSource) {
 
     companion object : KLogging() {
         private const val ERROR_UNCATEGORIZED = "error.uncategorized"
+        private const val ERROR_REST_RESOURCE_NOT_FOUND = "error.rest.resource.not.found"
         private const val ERROR_REST_RESOURCE_DUPLICATE = "error.rest.resource.duplicate"
     }
 }
