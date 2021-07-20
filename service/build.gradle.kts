@@ -4,6 +4,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen")
 }
 
+group = "com.epam.esm"
+version  = "1.0-SNAPSHOT"
+
 java {
     sourceCompatibility = JavaVersion.toVersion(Versions.javaGlobal)
     targetCompatibility = JavaVersion.toVersion(Versions.javaGlobal)
