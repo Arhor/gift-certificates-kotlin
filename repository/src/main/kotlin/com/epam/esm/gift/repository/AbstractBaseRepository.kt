@@ -19,16 +19,16 @@ import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 
 abstract class AbstractBaseRepository<T, K>(
-    private val rowMapper: RowMapper<T>,
+    protected val rowMapper: RowMapper<T>,
 ) : BaseRepository<T, K>, InitializingBean where T : BaseEntity<K>, K : Serializable {
 
     @Autowired
-    private lateinit var jdbcTemplate: NamedParameterJdbcTemplate
+    protected lateinit var jdbcTemplate: NamedParameterJdbcTemplate
 
     @Autowired
     private lateinit var queryProvider: QueryProvider
 
-    private lateinit var queries: Queries
+    protected lateinit var queries: Queries
 
     override fun afterPropertiesSet() {
         val bootstrapTime = measureTimeMillis {

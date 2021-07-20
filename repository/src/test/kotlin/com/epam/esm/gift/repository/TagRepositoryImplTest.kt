@@ -1,5 +1,6 @@
 package com.epam.esm.gift.repository
 
+import com.epam.esm.gift.model.Certificate
 import com.epam.esm.gift.model.Tag
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -9,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.math.BigDecimal
 
 @Transactional
 @ExtendWith(SpringExtension::class)
@@ -18,6 +20,9 @@ internal class TagRepositoryImplTest {
 
     @Autowired
     private lateinit var repository: TagRepositoryImpl
+
+    @Autowired
+    private lateinit var certificateRepository: CertificateRepositoryImpl
 
     @Test
     fun `should correctly persist and find new tag`() {
@@ -100,5 +105,72 @@ internal class TagRepositoryImplTest {
         // then
         assertThat(tagFromRepository)
             .isNull()
+    }
+
+    @Test
+    fun `should correctly add tags to an existing certificate`() {
+        // given
+        val initialTags = listOf(
+            Tag(name = "Test tag #1"),
+            Tag(name = "Test tag #2"),
+            Tag(name = "Test tag #3"),
+        )
+
+        for (initialTag in initialTags) {
+            repository.create(initialTag)
+        }
+
+        val certificate = certificateRepository.create(
+            Certificate(
+                name = "Test certificate name",
+                description = "Test certificate description",
+                price = BigDecimal("1.00"),
+                duration = 30
+            )
+        )
+
+        // when
+        repository.addTagsToCertificate(certificate.id!!, initialTags)
+        val tagsByCertificateId = repository.findTagsByCertificateId(certificate.id!!)
+
+        // then
+        assertThat(tagsByCertificateId)
+            .isEqualTo(initialTags)
+    }
+
+    @Test
+    fun `should correctly remove tags from an existing certificate`() {
+        // given
+        val initialTags1 = listOf(
+            Tag(name = "Test tag #1"),
+            Tag(name = "Test tag #2"),
+            Tag(name = "Test tag #3"),
+        )
+        val initialTags2 = listOf(
+            Tag(name = "Test tag #4"),
+            Tag(name = "Test tag #5"),
+            Tag(name = "Test tag #6"),
+        )
+
+        (initialTags1 + initialTags2).forEach(repository::create)
+
+        val certificate = certificateRepository.create(
+            Certificate(
+                name = "Test certificate name",
+                description = "Test certificate description",
+                price = BigDecimal("1.00"),
+                duration = 30
+            )
+        )
+
+        // when
+        repository.addTagsToCertificate(certificate.id!!, (initialTags1 + initialTags2))
+        repository.removeTagsFromCertificate(certificate.id!!, initialTags2)
+        val tagsByCertificateId = repository.findTagsByCertificateId(certificate.id!!)
+
+        // then
+        assertThat(tagsByCertificateId)
+            .containsExactlyElementsOf(initialTags1)
+            .doesNotContainAnyElementsOf(initialTags2)
     }
 }

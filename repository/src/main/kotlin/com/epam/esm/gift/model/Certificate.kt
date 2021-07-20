@@ -32,6 +32,8 @@ data class Certificate(
     var dateTimeUpdated: LocalDateTime? = null,
 ) : BaseEntity<Long>, Auditable {
 
+    val tags: MutableList<Tag> = ArrayList()
+
     override fun onCreate() {
         dateTimeCreated = LocalDateTime.now(ZoneOffset.UTC)
     }

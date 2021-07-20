@@ -11,6 +11,8 @@ java {
 }
 
 dependencies {
+    kapt("org.springframework:spring-context-indexer:${Versions.spring}")
+
     implementation("ch.qos.logback:logback-core:${Versions.logback}")
     implementation("ch.qos.logback:logback-classic:${Versions.logback}")
 
