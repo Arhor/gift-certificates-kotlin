@@ -28,9 +28,10 @@ class WebConfig : WebMvcConfigurer {
     override fun extendMessageConverters(converters: List<HttpMessageConverter<*>?>) {
         for (converter in converters) {
             if (converter is MappingJackson2HttpMessageConverter) {
-                val objectMapper: ObjectMapper = converter.objectMapper
-                objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                converter.objectMapper.apply {
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                }
             }
         }
     }
