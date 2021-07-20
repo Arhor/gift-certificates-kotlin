@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @EnableWebMvc
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ComponentScan("com.epam.esm.gift.web")
 class WebConfig : WebMvcConfigurer {
 
