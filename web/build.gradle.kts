@@ -25,11 +25,13 @@ dependencies {
 
     implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.jackson}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson}")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jackson}")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation("org.springframework:spring-context:${Versions.spring}")
+    implementation("org.springframework:spring-context-support:${Versions.spring}")
     implementation("org.springframework:spring-webmvc:${Versions.spring}")
 
     implementation("io.github.microutils:kotlin-logging-jvm:${Versions.kotlinLogging}")
