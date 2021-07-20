@@ -1,4 +1,5 @@
 object Versions {
+    const val servlet             = "3.1.0"
     const val postgresql          = "42.2.23"
     const val flyway              = "7.11.2"
     const val hikariCP            = "5.0.0"

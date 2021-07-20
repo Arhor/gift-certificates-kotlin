@@ -16,6 +16,8 @@ java {
 dependencies {
     kapt("org.springframework:spring-context-indexer:${Versions.spring}")
 
+    compileOnly("javax.servlet:javax.servlet-api:${Versions.servlet}")
+
     implementation(project(":service"))
 
     implementation("ch.qos.logback:logback-core:${Versions.logback}")
