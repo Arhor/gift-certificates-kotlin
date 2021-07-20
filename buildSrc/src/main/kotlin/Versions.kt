@@ -8,6 +8,7 @@ object Versions {
     const val kotlinLang          = "1.5.20"
     const val assertJCore         = "3.17.2"
     const val junitJupiter        = "5.7.2"
+    const val mapstruct           = "1.4.2.Final"
     const val mockitoCore         = "3.8.0"
     const val testcontainers      = "1.15.3"
     const val flywayGradlePlugin  = "7.0.0"
