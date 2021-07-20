@@ -6,7 +6,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 class WebAppInitializer : AbstractAnnotationConfigDispatcherServletInitializer() {
 
-    override fun getServletMappings() = arrayOf("/api")
+    override fun getServletMappings() = arrayOf("/")
 
     override fun getRootConfigClasses() = arrayOf(RootConfig::class.java)
 

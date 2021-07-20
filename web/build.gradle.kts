@@ -1,4 +1,5 @@
 plugins {
+    id("war")
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.kapt")
     id("org.jetbrains.kotlin.plugin.allopen")
@@ -10,7 +11,12 @@ java {
 }
 
 dependencies {
+    kapt("org.springframework:spring-context-indexer:${Versions.spring}")
+
     implementation(project(":service"))
+
+    implementation("ch.qos.logback:logback-core:${Versions.logback}")
+    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.jackson}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson}")
@@ -28,6 +34,8 @@ allOpen {
     annotations(
         "org.springframework.context.annotation.Configuration",
         "org.springframework.stereotype.Component",
-        "org.springframework.stereotype.Repository"
+        "org.springframework.web.bind.annotation.Controller",
+        "org.springframework.web.bind.annotation.RestController",
+        "org.springframework.web.bind.annotation.RestControllerAdvice",
     )
 }
