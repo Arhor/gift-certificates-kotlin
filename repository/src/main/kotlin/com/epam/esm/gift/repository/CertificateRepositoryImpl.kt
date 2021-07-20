@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class CertificateRepositoryImpl(rowMapper: RowMapper<Certificate>) :
-    AbstractBaseRepository<Certificate, Long>(rowMapper)
+    AbstractBaseRepository<Certificate, Long>(rowMapper), CertificateRepository
