@@ -12,4 +12,4 @@ data class Tag(
 
     @Column
     var name: String? = null,
-) : BaseEntity<Long>
+) : Entity<Long>

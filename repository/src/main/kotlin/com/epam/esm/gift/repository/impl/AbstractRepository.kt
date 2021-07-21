@@ -1,11 +1,11 @@
-package com.epam.esm.gift.repository
+package com.epam.esm.gift.repository.impl
 
 import com.epam.esm.gift.model.Auditable
-import com.epam.esm.gift.model.BaseEntity
+import com.epam.esm.gift.model.Entity
+import com.epam.esm.gift.repository.Repository
 import com.epam.esm.gift.repository.bootstrap.Queries
 import com.epam.esm.gift.repository.bootstrap.QueryProvider
 import mu.KLogging
-import mu.KotlinLogging
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.RowMapper
@@ -15,12 +15,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import java.io.Serializable
 import kotlin.system.measureTimeMillis
-import kotlin.time.measureTime
-import kotlin.time.measureTimedValue
 
-abstract class AbstractBaseRepository<T, K>(
+abstract class AbstractRepository<T, K>(
     protected val rowMapper: RowMapper<T>,
-) : BaseRepository<T, K>, InitializingBean where T : BaseEntity<K>, K : Serializable {
+) : Repository<T, K>, InitializingBean where T : Entity<K>, K : Serializable {
 
     @Autowired
     protected lateinit var jdbcTemplate: NamedParameterJdbcTemplate

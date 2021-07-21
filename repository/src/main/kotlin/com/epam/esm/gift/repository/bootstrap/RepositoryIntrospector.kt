@@ -3,7 +3,7 @@ package com.epam.esm.gift.repository.bootstrap
 import com.epam.esm.gift.annotation.Column
 import com.epam.esm.gift.annotation.Id
 import com.epam.esm.gift.annotation.Table
-import com.epam.esm.gift.repository.AbstractBaseRepository
+import com.epam.esm.gift.repository.impl.AbstractRepository
 import org.springframework.stereotype.Component
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KCallable
@@ -18,7 +18,7 @@ class RepositoryIntrospector {
 
     private val modelByType: MutableMap<KClass<*>, EntityModel> = ConcurrentHashMap()
 
-    fun <T : AbstractBaseRepository<*, *>> introspect(repositoryClass: KClass<T>): EntityModel {
+    fun <T : AbstractRepository<*, *>> introspect(repositoryClass: KClass<T>): EntityModel {
 
         val entityClass = determineEntityClass(repositoryClass)
 
@@ -52,7 +52,7 @@ class RepositoryIntrospector {
         return ColumnProperty(propName, realName)
     }
 
-    private fun <T : AbstractBaseRepository<*, *>> determineEntityClass(repositoryClass: KClass<T>): KClass<*> {
+    private fun <T : AbstractRepository<*, *>> determineEntityClass(repositoryClass: KClass<T>): KClass<*> {
         return repositoryClass.supertypes.firstOrNull(this::isRepositoryType)
             ?.arguments
             ?.get(ENTITY_TYPE_ARG_IDX)
@@ -62,7 +62,7 @@ class RepositoryIntrospector {
     }
 
     private fun isRepositoryType(type: KType): Boolean {
-        return type.classifier == AbstractBaseRepository::class.starProjectedType.classifier
+        return type.classifier == AbstractRepository::class.starProjectedType.classifier
     }
 
     companion object {

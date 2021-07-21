@@ -1,6 +1,7 @@
 package com.epam.esm.gift.repository
 
 import com.epam.esm.gift.model.Certificate
+import com.epam.esm.gift.repository.impl.CertificateRepositoryImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

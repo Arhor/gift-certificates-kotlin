@@ -1,9 +1,9 @@
 package com.epam.esm.gift.repository
 
-import com.epam.esm.gift.model.BaseEntity
+import com.epam.esm.gift.model.Entity
 import java.io.Serializable
 
-interface BaseRepository<T, K> where T : BaseEntity<K>, K : Serializable {
+interface Repository<T, K> where T : Entity<K>, K : Serializable {
 
     fun create(entity: T): T
 

@@ -1,12 +1,13 @@
-package com.epam.esm.gift.repository
+package com.epam.esm.gift.repository.impl
 
 import com.epam.esm.gift.model.Tag
+import com.epam.esm.gift.repository.TagRepository
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-class TagRepositoryImpl(rowMapper: RowMapper<Tag>) : AbstractBaseRepository<Tag, Long>(rowMapper), TagRepository {
+class TagRepositoryImpl(rowMapper: RowMapper<Tag>) : AbstractRepository<Tag, Long>(rowMapper), TagRepository {
 
     override fun findTagByName(name: String): Tag? {
         val params = mapOf("name" to name)
@@ -53,18 +54,14 @@ class TagRepositoryImpl(rowMapper: RowMapper<Tag>) : AbstractBaseRepository<Tag,
         jdbcTemplate.update(query.toString(), params)
     }
 
-    override fun removeTagsFromCertificate(certificateId: Long, tags: List<Tag>) {
+    override fun removeAllTagsFromCertificate(certificateId: Long) {
         jdbcTemplate.update(
             """
             DELETE
             FROM certificates_has_tags cht
             WHERE cht.certificates_id = :certificateId
-            AND cht.tags_id IN (:tagIds) 
             """.trimIndent(),
-            mapOf(
-                "certificateId" to certificateId,
-                "tagIds" to tags.mapNotNull { it.id }
-            )
+            mapOf("certificateId" to certificateId)
         )
     }
 }

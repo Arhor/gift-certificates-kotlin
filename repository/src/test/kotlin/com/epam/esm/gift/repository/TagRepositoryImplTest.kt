@@ -2,6 +2,8 @@ package com.epam.esm.gift.repository
 
 import com.epam.esm.gift.model.Certificate
 import com.epam.esm.gift.model.Tag
+import com.epam.esm.gift.repository.impl.CertificateRepositoryImpl
+import com.epam.esm.gift.repository.impl.TagRepositoryImpl
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -141,18 +143,13 @@ internal class TagRepositoryImplTest {
     @Test
     fun `should correctly remove tags from an existing certificate`() {
         // given
-        val initialTags1 = listOf(
+        val initialTags = listOf(
             Tag(name = "Test tag #1"),
             Tag(name = "Test tag #2"),
             Tag(name = "Test tag #3"),
         )
-        val initialTags2 = listOf(
-            Tag(name = "Test tag #4"),
-            Tag(name = "Test tag #5"),
-            Tag(name = "Test tag #6"),
-        )
 
-        (initialTags1 + initialTags2).forEach(repository::create)
+        initialTags.forEach(repository::create)
 
         val certificate = certificateRepository.create(
             Certificate(
@@ -164,13 +161,12 @@ internal class TagRepositoryImplTest {
         )
 
         // when
-        repository.addTagsToCertificate(certificate.id!!, (initialTags1 + initialTags2))
-        repository.removeTagsFromCertificate(certificate.id!!, initialTags2)
+        repository.addTagsToCertificate(certificate.id!!, initialTags)
+        repository.removeAllTagsFromCertificate(certificate.id!!)
         val tagsByCertificateId = repository.findTagsByCertificateId(certificate.id!!)
 
         // then
         assertThat(tagsByCertificateId)
-            .containsExactlyElementsOf(initialTags1)
-            .doesNotContainAnyElementsOf(initialTags2)
+            .isEmpty()
     }
 }

@@ -2,7 +2,7 @@ package com.epam.esm.gift.model
 
 import java.io.Serializable
 
-interface BaseEntity<T : Serializable> {
+interface Entity<T : Serializable> {
 
     var id: T?
 }

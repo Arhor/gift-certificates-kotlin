@@ -2,7 +2,7 @@ package com.epam.esm.gift.repository
 
 import com.epam.esm.gift.model.Tag
 
-interface TagRepository : BaseRepository<Tag, Long> {
+interface TagRepository : Repository<Tag, Long> {
 
     fun findTagByName(name: String): Tag?
 
@@ -12,5 +12,5 @@ interface TagRepository : BaseRepository<Tag, Long> {
 
     fun addTagsToCertificate(certificateId: Long, tags: List<Tag>)
 
-    fun removeTagsFromCertificate(certificateId: Long, tags: List<Tag>)
+    fun removeAllTagsFromCertificate(certificateId: Long)
 }
