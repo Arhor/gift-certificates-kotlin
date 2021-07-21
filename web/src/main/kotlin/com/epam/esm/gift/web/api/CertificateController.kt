@@ -34,6 +34,11 @@ class CertificateController(private val service: Service<CertificateDTO, Long>) 
         return ResponseEntity.created(location).body(createdCertificate)
     }
 
+    @PatchMapping
+    fun updateCertificate(@RequestBody certificate: CertificateDTO): CertificateDTO {
+        return service.update(certificate)
+    }
+
     @DeleteMapping("/{certificateId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteCertificate(@PathVariable certificateId: Long) {
