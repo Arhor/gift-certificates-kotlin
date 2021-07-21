@@ -4,12 +4,12 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class CertificateDTO(
-    val id: Long,
-    val name: String,
-    val description: String,
-    val price: BigDecimal,
-    val duration: Int,
-    val dateTimeCreated: LocalDateTime,
+    val id: Long?,
+    val name: String?,
+    val description: String?,
+    val price: BigDecimal?,
+    val duration: Int?,
+    val dateTimeCreated: LocalDateTime?,
     val dateTimeUpdated: LocalDateTime?,
-    val tags: List<TagDTO>,
+    var tags: List<TagDTO>?,
 )
