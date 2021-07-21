@@ -22,6 +22,7 @@ class TagController(private val service: Service<TagDTO, Long>) {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun createNewTag(@RequestBody tag: TagDTO): ResponseEntity<*> {
         val createdTag = service.create(tag)
 
