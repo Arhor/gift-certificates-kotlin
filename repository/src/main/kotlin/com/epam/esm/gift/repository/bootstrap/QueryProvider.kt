@@ -1,15 +1,13 @@
 package com.epam.esm.gift.repository.bootstrap
 
-import com.epam.esm.gift.repository.impl.AbstractRepository
 import org.springframework.stereotype.Component
-import kotlin.reflect.KClass
 
 @Component
-class QueryProvider(private val introspector: RepositoryIntrospector) {
+class QueryProvider {
 
-    fun <T : AbstractRepository<*, *>> buildQueries(repositoryClass: KClass<T>): Queries {
+    fun buildQueries(entityModel: EntityModel): Queries {
 
-        val (tableName, idColumn, restColumns) = introspector.introspect(repositoryClass)
+        val (tableName, idColumn, restColumns) = entityModel
 
         val restColumnsArray = restColumns.toTypedArray()
         val allColumns = arrayOf(idColumn, *restColumnsArray).joinToString { it.realName }

@@ -3,8 +3,10 @@ package com.epam.esm.gift.repository.impl
 import com.epam.esm.gift.model.Auditable
 import com.epam.esm.gift.model.Entity
 import com.epam.esm.gift.repository.Repository
+import com.epam.esm.gift.repository.bootstrap.EntityModel
 import com.epam.esm.gift.repository.bootstrap.Queries
 import com.epam.esm.gift.repository.bootstrap.QueryProvider
+import com.epam.esm.gift.repository.bootstrap.RepositoryIntrospector
 import mu.KLogging
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,13 +26,18 @@ abstract class AbstractRepository<T, K>(
     protected lateinit var jdbcTemplate: NamedParameterJdbcTemplate
 
     @Autowired
+    private lateinit var introspector: RepositoryIntrospector
+
+    @Autowired
     private lateinit var queryProvider: QueryProvider
 
+    protected lateinit var entityModel: EntityModel
     protected lateinit var queries: Queries
 
     override fun afterPropertiesSet() {
         val bootstrapTime = measureTimeMillis {
-            queries = queryProvider.buildQueries(this::class)
+            entityModel = introspector.introspect(this::class)
+            queries = queryProvider.buildQueries(entityModel)
         }
         logger.info { "Bootstrapped ${this::class.simpleName} in $bootstrapTime milliseconds" }
     }
