@@ -17,4 +17,6 @@ object Versions {
     const val logback             = "1.2.3"
     const val kotlinLogging       = "2.0.6"
     const val jackson             = "2.12.4"
+    const val nodeJS              = "14.17.4"
+    const val nodeJSGradlePlugin  = "3.0.1"
 }
