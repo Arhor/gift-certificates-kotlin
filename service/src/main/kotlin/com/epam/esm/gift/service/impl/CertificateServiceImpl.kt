@@ -9,6 +9,8 @@ import com.epam.esm.gift.model.Tag
 import com.epam.esm.gift.repository.CertificateRepository
 import com.epam.esm.gift.repository.TagRepository
 import com.epam.esm.gift.service.Service
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Lazy
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service as SpringService
 
@@ -20,6 +22,10 @@ class CertificateServiceImpl(
     private val tagRepository: TagRepository,
     private val tagConverter: TagConverter,
 ) : Service<CertificateDTO, Long> {
+
+    @Lazy
+    @Autowired
+    lateinit var self: Service<CertificateDTO, Long>
 
     override fun findOne(id: Long): CertificateDTO {
         return certificateRepository.findById(id)
