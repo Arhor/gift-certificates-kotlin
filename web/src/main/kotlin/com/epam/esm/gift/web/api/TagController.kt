@@ -1,42 +1,34 @@
 package com.epam.esm.gift.web.api
 
 import com.epam.esm.gift.dto.TagDTO
-import com.epam.esm.gift.service.Service
+import org.springframework.hateoas.CollectionModel
+import org.springframework.hateoas.EntityModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
-@RestController
-@RequestMapping("/tags")
-class TagController(private val service: Service<TagDTO, Long>) {
+@RequestMapping(path = ["/tags"])
+interface TagController {
 
     @GetMapping
-    fun getAllTags(): List<TagDTO> {
-        return service.findAll()
-    }
+    fun getTags(
+        @RequestParam(defaultValue = DEFAULT_PAGE) page: Int,
+        @RequestParam(defaultValue = DEFAULT_SIZE) size: Int,
+    ): CollectionModel<*>
 
     @GetMapping("/{tagId}")
-    fun getTagById(@PathVariable tagId: Long): TagDTO {
-        return service.findOne(tagId)
-    }
+    fun getTagById(@PathVariable tagId: Long): EntityModel<TagDTO>
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createNewTag(@RequestBody tag: TagDTO): ResponseEntity<*> {
-        val createdTag = service.create(tag)
-
-        val location =
-            ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .path("/{id}")
-                .build(createdTag.id)
-
-        return ResponseEntity.created(location).body(createdTag)
-    }
+    fun createNewTag(@RequestBody tag: TagDTO): ResponseEntity<*>
 
     @DeleteMapping("/{tagId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteTag(@PathVariable tagId: Long) {
-        service.deleteById(tagId)
+    fun deleteTag(@PathVariable tagId: Long)
+
+    companion object {
+        const val DEFAULT_PAGE = "1"
+        const val DEFAULT_SIZE = "20"
     }
 }

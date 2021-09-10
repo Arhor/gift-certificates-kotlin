@@ -1,5 +1,6 @@
 package com.epam.esm.gift.web.error
 
+import com.epam.esm.gift.TimeService
 import com.epam.esm.gift.error.EntityDuplicateException
 import com.epam.esm.gift.error.EntityNotFoundException
 import mu.KLogging
@@ -12,18 +13,26 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.*
 
 @RestControllerAdvice
-class GlobalExceptionHandler(private val messages: MessageSource) : ResponseEntityExceptionHandler() {
+class GlobalExceptionHandler(
+    private val messages: MessageSource,
+    private val timeService: TimeService,
+) : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    fun handleDefault(ex: Exception, locale: Locale): ApiError {
+    fun handleDefault(ex: Exception, locale: Locale, timeZone: TimeZone): ApiError {
         logger.error(ex.message, ex)
-        return ApiError(messages.getMessage(ERROR_UNCATEGORIZED, locale))
+        return ApiError(
+            message = messages.getMessage(ERROR_UNCATEGORIZED, locale),
+            timestamp = timeService.now(timeZone)
+        )
     }
 
     @ExceptionHandler(EntityNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun handleEntityNotFoundException(ex: EntityNotFoundException, locale: Locale): ApiError {
+    fun handleEntityNotFoundException(
+        ex: EntityNotFoundException, locale: Locale, timeZone: TimeZone
+    ): ApiError {
         logger.error(ex.message, ex)
         return ApiError(
             message = messages.getMessage(
@@ -31,13 +40,16 @@ class GlobalExceptionHandler(private val messages: MessageSource) : ResponseEnti
                 arrayOf(ex.name, ex.condition),
                 locale
             ),
+            timestamp = timeService.now(timeZone),
             code = ErrorCode.NOT_FOUND
         )
     }
 
     @ExceptionHandler(EntityDuplicateException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    fun handleEntityDuplicateException(ex: EntityDuplicateException, locale: Locale): ApiError {
+    fun handleEntityDuplicateException(
+        ex: EntityDuplicateException, locale: Locale, timeZone: TimeZone
+    ): ApiError {
         logger.error(ex.message, ex)
         return ApiError(
             message = messages.getMessage(
@@ -45,6 +57,7 @@ class GlobalExceptionHandler(private val messages: MessageSource) : ResponseEnti
                 arrayOf(ex.name, ex.condition),
                 locale
             ),
+            timestamp = timeService.now(timeZone),
             code = ErrorCode.DUPLICATE
         )
     }

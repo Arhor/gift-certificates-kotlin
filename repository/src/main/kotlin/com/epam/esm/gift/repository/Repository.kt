@@ -1,9 +1,9 @@
 package com.epam.esm.gift.repository
 
-import com.epam.esm.gift.model.Entity
+import com.epam.esm.gift.model.Identifiable
 import java.io.Serializable
 
-interface Repository<T, K> where T : Entity<K>, K : Serializable {
+interface Repository<T, K> where T : Identifiable<K>, K : Serializable {
 
     fun create(entity: T): T
 
@@ -14,6 +14,4 @@ interface Repository<T, K> where T : Entity<K>, K : Serializable {
     fun findById(id: K): T?
 
     fun delete(entity: T)
-
-    fun deleteById(id: K)
 }

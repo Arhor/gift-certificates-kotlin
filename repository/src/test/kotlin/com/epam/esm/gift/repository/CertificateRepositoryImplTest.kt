@@ -27,7 +27,7 @@ internal class CertificateRepositoryImplTest {
         val initialCertificate = testCertificate(name = "Test Certificate")
 
         // when
-        val (createdCertificateId, _) = repository.create(initialCertificate)
+        val createdCertificateId = repository.create(initialCertificate).id
         val certificateFromRepository = repository.findById(createdCertificateId!!)
 
         // then
@@ -46,11 +46,11 @@ internal class CertificateRepositoryImplTest {
 
         // when
         val createdCertificate = repository.create(initialCertificate)
-        val updatedCertificate = repository.update(createdCertificate.copy(name = updatedName))
+        val updatedCertificate = repository.update(createdCertificate.apply { name = updatedName })
 
         // then
         assertThat(updatedCertificate.name)
-            .isNotEqualTo(createdCertificate.name)
+            .isEqualTo(createdCertificate.name)
             .isEqualTo(updatedName)
     }
 
@@ -98,7 +98,7 @@ internal class CertificateRepositoryImplTest {
 
         // when
         val createdCertificate = repository.create(initialCertificate)
-        repository.deleteById(createdCertificate.id!!)
+        repository.delete(createdCertificate)
         val certificateFromRepository = repository.findById(createdCertificate.id!!)
 
         // then
@@ -107,11 +107,11 @@ internal class CertificateRepositoryImplTest {
     }
 
     private fun testCertificate(name: String): Certificate {
-        return Certificate(
-            name = name,
-            description = "Test certificate description",
-            price = BigDecimal("1.00"),
-            duration = 30
-        )
+        return Certificate().apply {
+            this.name = name
+            this.description = "Test certificate description"
+            this.price = BigDecimal("1.00")
+            this.duration = 30
+        }
     }
 }

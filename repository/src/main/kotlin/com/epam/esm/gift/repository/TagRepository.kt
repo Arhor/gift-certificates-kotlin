@@ -8,8 +8,6 @@ interface TagRepository : Repository<Tag, Long> {
 
     fun findTagByNames(names: List<String>): List<Tag>
 
-    fun findTagsByCertificateId(certificateId: Long): List<Tag>
-
     fun addTagsToCertificate(certificateId: Long, tags: List<Tag>)
 
     fun removeAllTagsFromCertificate(certificateId: Long)

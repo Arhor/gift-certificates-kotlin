@@ -1,8 +1,8 @@
 package com.epam.esm.gift.model
 
-interface Auditable {
+import java.time.temporal.TemporalAccessor
 
-    fun onCreate()
-
-    fun onUpdate()
+interface Auditable<T : TemporalAccessor> {
+    var dateTimeCreated: T?
+    var dateTimeUpdated: T?
 }

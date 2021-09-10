@@ -11,6 +11,7 @@ import com.epam.esm.gift.repository.TagRepository
 import com.epam.esm.gift.service.Service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service as SpringService
 
@@ -42,7 +43,7 @@ class CertificateServiceImpl(
 
     override fun create(item: CertificateDTO): CertificateDTO {
         val certificate = certificateConverter.mapDtoToEntity(item)
-        val createdCertificate = certificateRepository.create(certificate.copy())
+        val createdCertificate = certificateRepository.create(certificate)
 
         return certificateConverter.mapEntityToDto(createdCertificate).apply {
             tags = linkTagsToCertificate(id, item.tags)
@@ -51,7 +52,7 @@ class CertificateServiceImpl(
 
     override fun update(item: CertificateDTO): CertificateDTO {
         val certificate = certificateConverter.mapDtoToEntity(item)
-        val updatedCertificate = certificateRepository.update(certificate.copy())
+        val updatedCertificate = certificateRepository.update(certificate)
 
         tagRepository.removeAllTagsFromCertificate(certificate.id!!)
 
@@ -66,9 +67,11 @@ class CertificateServiceImpl(
     }
 
     private fun initializeCertificateTags(certificate: CertificateDTO): CertificateDTO {
-        val certificateTags = tagRepository.findTagsByCertificateId(certificate.id!!)
-        certificate.tags = certificateTags.map(tagConverter::mapEntityToDto)
-        return certificate
+        return certificate.apply {
+            tags = certificateRepository.findById(certificate.id!!)!!
+                .tags
+                .map(tagConverter::mapEntityToDto)
+        }
     }
 
     private fun linkTagsToCertificate(certificateId: Long?, tags: List<TagDTO>?): List<TagDTO> {

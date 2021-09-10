@@ -1,42 +1,46 @@
 package com.epam.esm.gift.model
 
-import com.epam.esm.gift.annotation.Column
-import com.epam.esm.gift.annotation.Id
-import com.epam.esm.gift.annotation.Table
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.Instant
+import java.util.*
+import javax.persistence.*
+import kotlin.collections.ArrayList
 
-@Table("certificates")
-data class Certificate(
-    @Id
-    @Column
-    override var id: Long? = null,
+@Entity
+@Table(name = "certificates")
+@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE certificates SET deleted = true WHERE id = ?")
+open class Certificate : AbstractDeletable<Long>() {
 
-    @Column
-    var name: String? = null,
+    @Column(name = "name")
+    open var name: String? = null
 
-    @Column
-    var description: String? = null,
+    @Column(name = "description")
+    open var description: String? = null
 
-    @Column
-    var price: BigDecimal? = null,
+    @Column(name = "price")
+    open var price: BigDecimal? = null
 
-    @Column
-    var duration: Int? = null,
+    @Column(name = "duration")
+    open var duration: Int? = null
 
-    @Column("date_time_created")
-    var dateTimeCreated: LocalDateTime? = null,
+    @CreatedDate
+    @Column(name = "date_time_created")
+    override var dateTimeCreated: Instant? = null
 
-    @Column("date_time_updated")
-    var dateTimeUpdated: LocalDateTime? = null,
-) : Entity<Long>, Auditable {
+    @LastModifiedDate
+    @Column(name = "date_time_updated")
+    override var dateTimeUpdated: Instant? = null
 
-    override fun onCreate() {
-        dateTimeCreated = LocalDateTime.now(ZoneOffset.UTC)
-    }
-
-    override fun onUpdate() {
-        dateTimeUpdated = LocalDateTime.now(ZoneOffset.UTC)
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "certificates_has_tags",
+        joinColumns = [JoinColumn(name = "certificates_id", nullable = false)],
+        inverseJoinColumns = [JoinColumn(name = "tags_id", nullable = false)],
+    )
+    open var tags: MutableList<Tag> = ArrayList()
 }

@@ -1,15 +1,13 @@
 package com.epam.esm.gift.model
 
-import com.epam.esm.gift.annotation.Column
-import com.epam.esm.gift.annotation.Id
-import com.epam.esm.gift.annotation.Table
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Table
 
-@Table("tags")
-data class Tag(
-    @Id
-    @Column
-    override var id: Long? = null,
+@Entity
+@Table(name = "tags")
+open class Tag : AbstractIdentifiable<Long>() {
 
-    @Column
-    var name: String? = null,
-) : Entity<Long>
+    @Column(name = "name")
+    open var name: String? = null
+}

@@ -7,6 +7,12 @@ import org.springframework.web.servlet.DispatcherServlet
 import org.springframework.web.servlet.FrameworkServlet
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer
 
+/**
+ * Application initializer. Required to deploy `war` artifact into standalone application server.
+ * Serves as a replacement for deployment descriptor `web.xml`.
+ *
+ * @see org.springframework.web.WebApplicationInitializer
+ */
 class WebAppInitializer : AbstractAnnotationConfigDispatcherServletInitializer() {
 
     override fun getServletMappings() = arrayOf("/")

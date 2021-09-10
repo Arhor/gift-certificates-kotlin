@@ -2,34 +2,30 @@ package com.epam.esm.gift.repository.impl
 
 import com.epam.esm.gift.model.Tag
 import com.epam.esm.gift.repository.TagRepository
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.util.*
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 @Repository
-class TagRepositoryImpl(rowMapper: RowMapper<Tag>) : AbstractRepository<Tag, Long>(rowMapper), TagRepository {
+class TagRepositoryImpl : AbstractRepository<Tag, Long>(), TagRepository {
+
+    @PersistenceContext
+    override lateinit var entityManager: EntityManager
+
+    override val entityClass = Tag::class.java
 
     override fun findTagByName(name: String): Tag? {
-        val params = mapOf("name" to name)
-        return jdbcTemplate.query("${queries.selectAll} WHERE name = :name", params, rowMapper).firstOrNull()
+        return entityManager.createQuery(SELECT_BY_NAME, Tag::class.java)
+            .setParameter("name", name)
+            .resultList
+            .firstOrNull()
     }
 
     override fun findTagByNames(names: List<String>): List<Tag> {
-        val params = mapOf("names" to names)
-        return jdbcTemplate.query("${queries.selectAll} WHERE name IN (:names)", params, rowMapper)
-    }
-
-    override fun findTagsByCertificateId(certificateId: Long): List<Tag> {
-        return jdbcTemplate.query(
-            """
-            SELECT t.id, t.name
-            FROM tags t
-            JOIN certificates_has_tags cht on t.id = cht.tags_id
-            WHERE cht.certificates_id = :certificateId
-            """.trimIndent(),
-            mapOf("certificateId" to certificateId),
-            rowMapper
-        )
+        return entityManager.createQuery(SELECT_BY_NAMES, Tag::class.java)
+            .setParameter("names", names)
+            .resultList
     }
 
     override fun addTagsToCertificate(certificateId: Long, tags: List<Tag>) {
@@ -51,17 +47,28 @@ class TagRepositoryImpl(rowMapper: RowMapper<Tag>) : AbstractRepository<Tag, Lon
             params[tagIdPlaceholder] = tag.id!!
         }
 
-        jdbcTemplate.update(query.toString(), params)
+        val nativeQuery = entityManager.createNativeQuery(query.toString())
+
+        for ((param, value) in params) {
+            nativeQuery.setParameter(param, value)
+        }
+
+        nativeQuery.executeUpdate()
     }
 
     override fun removeAllTagsFromCertificate(certificateId: Long) {
-        jdbcTemplate.update(
-            """
-            DELETE
-            FROM certificates_has_tags cht
-            WHERE cht.certificates_id = :certificateId
-            """.trimIndent(),
-            mapOf("certificateId" to certificateId)
-        )
+        entityManager
+            .createNativeQuery(REMOVE_TAGS_FROM_CERTIFICATE)
+            .setParameter("certificateId", certificateId)
+            .executeUpdate()
+    }
+
+    companion object {
+        const val SELECT_BY_NAME =
+            "SELECT t FROM Tag t WHERE t.name = :name"
+        const val SELECT_BY_NAMES =
+            "SELECT t FROM Tag t WHERE t.name IN (:names)"
+        const val REMOVE_TAGS_FROM_CERTIFICATE =
+            "DELETE FROM certificates_has_tags WHERE certificates_id = :certificateId"
     }
 }

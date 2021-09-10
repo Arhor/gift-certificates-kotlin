@@ -1,48 +1,43 @@
 plugins {
-    id("war")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.kapt")
-    id("org.jetbrains.kotlin.plugin.allopen")
+    id("org.jetbrains.kotlin.plugin.spring")
 }
 
-group = "com.epam.esm"
-version  = "1.0-SNAPSHOT"
+version  = "0.0.1"
+description = "web"
 
 java {
-    sourceCompatibility = JavaVersion.toVersion(Versions.javaGlobal)
-    targetCompatibility = JavaVersion.toVersion(Versions.javaGlobal)
+    sourceCompatibility = JavaVersion.toVersion(Versions.java)
+    targetCompatibility = JavaVersion.toVersion(Versions.java)
+}
+
+configurations {
+    testImplementation {
+        exclude(module = "junit-vintage-engine")
+    }
 }
 
 dependencies {
-    kapt("org.springframework:spring-context-indexer:${Versions.spring}")
+    kapt("org.springframework:spring-context-indexer")
 
-    compileOnly("javax.servlet:javax.servlet-api:${Versions.servlet}")
-
+    implementation(project(":common"))
     implementation(project(":service"))
 
-    implementation("ch.qos.logback:logback-core:${Versions.logback}")
-    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
-
-    implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.jackson}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.jackson}")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${Versions.jackson}")
-
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.github.microutils:kotlin-logging-jvm:${Versions.kotlinLogging}")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.springframework.boot:spring-boot-starter-hateoas")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("org.springframework:spring-context:${Versions.spring}")
-    implementation("org.springframework:spring-context-support:${Versions.spring}")
-    implementation("org.springframework:spring-webmvc:${Versions.spring}")
-
-    implementation("io.github.microutils:kotlin-logging-jvm:${Versions.kotlinLogging}")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-allOpen {
-    annotations(
-        "org.springframework.context.annotation.Configuration",
-        "org.springframework.stereotype.Component",
-        "org.springframework.web.bind.annotation.Controller",
-        "org.springframework.web.bind.annotation.RestController",
-        "org.springframework.web.bind.annotation.RestControllerAdvice",
-    )
+tasks {
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }

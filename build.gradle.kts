@@ -6,11 +6,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * - plugins declared here allows not only to configure the version, but also adds it to the classpath
  */
 plugins {
-    id("org.flywaydb.flyway")                 version Versions.flywayGradlePlugin apply false
-    id("org.jetbrains.kotlin.jvm")            version Versions.kotlinLang         apply false
-    id("org.jetbrains.kotlin.kapt")           version Versions.kotlinLang         apply false
-    id("org.jetbrains.kotlin.plugin.noarg")   version Versions.kotlinLang         apply false
-    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlinLang         apply false
+    id("org.flywaydb.flyway")                 version Versions.flywayGradlePlugin  apply false
+    id("org.springframework.boot")            version Versions.springBoot          apply false
+    id("io.spring.dependency-management")     version Versions.springDepManagement apply false
+    id("org.jetbrains.kotlin.jvm")            version Versions.kotlin              apply false
+    id("org.jetbrains.kotlin.kapt")           version Versions.kotlin              apply false
+    id("org.jetbrains.kotlin.plugin.noarg")   version Versions.kotlin              apply false
+    id("org.jetbrains.kotlin.plugin.allopen") version Versions.kotlin              apply false
+    id("org.jetbrains.kotlin.plugin.spring")  version Versions.kotlin              apply false
+    id("org.jetbrains.kotlin.plugin.jpa")     version Versions.kotlin              apply false
 }
 
 allprojects {
@@ -19,7 +23,6 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { setUrl("https://repo.spring.io/milestone") }
     }
 
     tasks {
@@ -36,9 +39,10 @@ allprojects {
             kotlinOptions {
                 freeCompilerArgs = listOf(
                     "-Xjsr305=strict",
-                    "-Xjvm-default=all"
+                    "-Xjvm-default=all",
+                    "-Xopt-in=kotlin.RequiresOptIn"
                 )
-                jvmTarget = Versions.javaGlobal
+                jvmTarget = Versions.java
                 javaParameters = true
             }
         }

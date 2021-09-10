@@ -8,6 +8,14 @@ interface Service<D, K> where K : Serializable {
 
     fun findAll(): List<D>
 
+    fun findPaged(page: Int, size: Int): List<D> {
+        return findAll()
+            .asSequence()
+            .drop((page - 1) * size)
+            .take(size)
+            .toList()
+    }
+
     fun create(item: D): D
 
     fun update(item: D): D

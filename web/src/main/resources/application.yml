@@ -1,0 +1,68 @@
+server:
+  port: ${PORT:5000}
+
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: gift-certificates-kotlin
+
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILES:dev}
+
+  hateoas:
+    use-hal-as-default-json-media-type: true
+
+  messages:
+    basename: messages
+
+  output:
+    ansi:
+      enabled: detect
+
+  sql:
+    init:
+      platform: postgres
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    hikari:
+      auto-commit: false
+
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    enabled: true
+    baseline-on-migrate: true
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate.connection.autocommit: false
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.format_sql: true
+      hibernate.id.new_generator_mappings: true
+      hibernate.generate_statistics: false
+      hibernate.jdbc.batch_size: 25
+      hibernate.jdbc.batch_versioned_data: true
+      hibernate.jdbc.fetch_size: 100
+      hibernate.jdbc.lob.non_contextual_creation: true
+      hibernate.jdbc.time_zone: UTC
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.proc.param_null_passing: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true

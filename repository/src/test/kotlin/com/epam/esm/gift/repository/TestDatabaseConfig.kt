@@ -1,31 +1,40 @@
 package com.epam.esm.gift.repository
 
-import mu.KotlinLogging
+import com.epam.esm.gift.TimeService
+import com.epam.esm.gift.config.RepositoryConfig
+import mu.KLogging
 import org.flywaydb.core.Flyway
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.jdbc.datasource.DataSourceTransactionManager
+import org.springframework.context.annotation.Import
 import org.springframework.jdbc.datasource.DriverManagerDataSource
-import org.springframework.transaction.TransactionManager
-import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.orm.jpa.JpaTransactionManager
+import org.springframework.orm.jpa.JpaVendorAdapter
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean
+import org.springframework.orm.jpa.vendor.Database
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter
+import org.springframework.transaction.PlatformTransactionManager
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
+import java.time.Instant
+import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 
-private typealias PostgresContainer = PostgreSQLContainer<*>
-
-private val log = KotlinLogging.logger {}
-
+@Import(RepositoryConfig::class)
 @Configuration(proxyBeanMethods = false)
-@ComponentScan("com.epam.esm.gift.repository")
-@EnableTransactionManagement
 internal class TestDatabaseConfig {
 
     @Bean
+    fun simpleTimeService(): TimeService {
+
+        return TimeService { Instant.now() }
+    }
+
+    @Bean
     fun dataSource(): DataSource {
-        log.debug("Creating DataSource instance")
+
+        logger.debug { "Creating DataSource instance" }
         return DriverManagerDataSource().apply {
             url = db.jdbcUrl
             username = db.username
@@ -35,27 +44,49 @@ internal class TestDatabaseConfig {
     }
 
     @Bean
-    fun transactionManager(dataSource: DataSource): TransactionManager {
-        log.debug("Creating TransactionManager to handle DB transactions")
-        return DataSourceTransactionManager(dataSource)
+    fun jpaVendorAdapter(): JpaVendorAdapter {
+
+        logger.debug { "Creating JpaVendorAdapter (Hibernate)" }
+        return HibernateJpaVendorAdapter().apply {
+            setDatabase(Database.POSTGRESQL)
+            setShowSql(true)
+            setGenerateDdl(false)
+            setDatabasePlatform("org.hibernate.dialect.PostgreSQLDialect")
+        }
     }
 
     @Bean
-    fun jdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate {
-        log.debug("Creating JdbcTemplate to execute queries")
-        return NamedParameterJdbcTemplate(dataSource)
+    fun entityManagerFactoryBean(
+        dataSource: DataSource,
+        jpaVendorAdapter: JpaVendorAdapter
+    ): LocalContainerEntityManagerFactoryBean {
+
+        logger.debug { "Creating LocalContainerEntityManagerFactoryBean instance" }
+        return LocalContainerEntityManagerFactoryBean().apply {
+            setDataSource(dataSource)
+            setJpaVendorAdapter(jpaVendorAdapter)
+            setPackagesToScan("com.epam.esm")
+        }
+    }
+
+    @Bean
+    fun transactionManager(entityManagerFactory: EntityManagerFactory): PlatformTransactionManager {
+
+        logger.debug { "Creating TransactionManager instance" }
+        return JpaTransactionManager(entityManagerFactory)
     }
 
 
     @Bean(initMethod = "migrate")
     fun flyway(dataSource: DataSource): Flyway {
-        log.debug("Configuring flyway instance to apply migrations")
+
+        logger.debug { "Configuring flyway instance to apply migrations" }
         return Flyway.configure().dataSource(dataSource).load()
     }
 
-    companion object {
+    companion object : KLogging() {
         @JvmStatic
         @Container
-        private val db = PostgresContainer("postgres:11.7").apply { start() }
+        private val db = PostgreSQLContainer<Nothing>("postgres:11.7").apply { start() }
     }
 }
